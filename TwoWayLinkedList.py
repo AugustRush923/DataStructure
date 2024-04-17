@@ -2,7 +2,10 @@ from typing import Any
 
 
 class TwoWayLinkedListNode:
-    def __init__(self, value: Any, prev_node=None, next_node=None):
+    def __init__(
+            self, value: Any,
+            prev_node: 'TwoWayLinkedListNode' = None,
+            next_node: 'TwoWayLinkedListNode' = None):
         self.value = value
         self.prev_node = prev_node
         self.next_node = next_node
@@ -12,7 +15,11 @@ class TwoWayLinkedListNode:
 
 
 class TwoWayLinkedList:
-    def __init__(self, head: TwoWayLinkedListNode | None = None, tail: TwoWayLinkedListNode | None = None):
+    def __init__(
+            self,
+            head: TwoWayLinkedListNode | None = None,
+            tail: TwoWayLinkedListNode | None = None,
+    ):
         self._head = head
         self._tail = tail
         self._length = 0
@@ -149,5 +156,5 @@ class TwoWayLinkedList:
         raise ValueError("value is not exist")
 
 
-def init_twoway_linked_list():
+def twoway_linked_list():
     return TwoWayLinkedList()
