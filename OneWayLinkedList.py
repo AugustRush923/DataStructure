@@ -56,6 +56,18 @@ class OneWayLinkedList:
         self._current = self._current.next_node
         return value
 
+    def insert_node(self, before: Any, after: Any) -> None:
+        new_node = OneWayLinkedListNode(after)
+        current_node = self._head
+
+        while current_node:
+            if current_node.value == before:
+                new_node.next_node = current_node.next_node
+                current_node.next_node = new_node
+                return
+            current_node = current_node.next_node
+        return
+
     def _append_node(self, new_node: OneWayLinkedListNode, direction: str = 'tail') -> None:
         if self._length == 0:
             self._head = new_node
