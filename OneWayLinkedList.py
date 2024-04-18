@@ -117,6 +117,4 @@ class OneWayLinkedList:
         self._tail = None
         self._length = 0
 
-def oneway_linked_list():
-    return OneWayLinkedList()
         return
