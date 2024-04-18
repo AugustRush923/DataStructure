@@ -56,17 +56,17 @@ class OneWayLinkedList:
         self._current = self._current.next_node
         return value
 
-    def _append_node(self, node: OneWayLinkedListNode, direction: str = 'tail') -> None:
+    def _append_node(self, new_node: OneWayLinkedListNode, direction: str = 'tail') -> None:
         if self._length == 0:
-            self._head = node
-            self._tail = node
+            self._head = new_node
+            self._tail = new_node
         else:
             if direction == 'tail':
                 tail = self._tail
-                tail.next_node, self._tail = node, node
+                tail.next_node, self._tail = new_node, new_node
             else:
                 head = self._head
-                node.next_node, self._head = head, node
+                new_node.next_node, self._head = head, new_node
 
         self._length += 1
 
@@ -78,7 +78,7 @@ class OneWayLinkedList:
         new_node = OneWayLinkedListNode(value)
         self._append_node(new_node, direction='head')
 
-    def find_node(self, value: Any) -> Any:
+    def find_node(self, value: Any) -> OneWayLinkedListNode | None:
         current_node = self._head
         while current_node:
             if current_node.value == value:
@@ -86,22 +86,26 @@ class OneWayLinkedList:
             current_node = current_node.next_node
         return None
 
-    def remove_node(self, value: Any) -> None:
-        ...
+    def remove_node(self, value: Any) -> OneWayLinkedListNode | None:
+        current_node, previous_node = self._head, None
+
+        while current_node:
+            if current_node.value == value:
+                if previous_node is None:
+                    self._head, current_node.next_node = current_node.next_node, None
+                else:
+                    previous_node.next_node, current_node.next_node = current_node.next_node, None
+                return current_node
+            previous_node, current_node = current_node, current_node.next_node
+
+        return None
+
+    def head_remove(self) -> OneWayLinkedListNode | None:
+        return self.remove_node(self._head.value)
+
+    def tail_remove(self) -> OneWayLinkedListNode | None:
+        return self.remove_node(self._tail.value)
 
 
 def oneway_linked_list():
     return OneWayLinkedList()
-
-
-if __name__ == '__main__':
-    linked_list = oneway_linked_list()
-    linked_list.tail_append_node(1)
-    linked_list.tail_append_node(2)
-    linked_list.head_append_node(0)
-    linked_list.tail_append_node(3)
-    print(linked_list)
-    for node in linked_list:
-        print(node)
-    print(linked_list.find_node(3))
-    print(linked_list.find_node(4))
