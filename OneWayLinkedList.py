@@ -95,6 +95,7 @@ class OneWayLinkedList:
                     self._head, current_node.next_node = current_node.next_node, None
                 else:
                     previous_node.next_node, current_node.next_node = current_node.next_node, None
+                self._length -= 1
                 return current_node
             previous_node, current_node = current_node, current_node.next_node
 
@@ -106,6 +107,16 @@ class OneWayLinkedList:
     def tail_remove(self) -> OneWayLinkedListNode | None:
         return self.remove_node(self._tail.value)
 
+    def clear(self) -> None:
+        current = self._head
+        while current:
+            next_node = current.next_node
+            current.next_node, current = None, next_node
+
+        self._head = None
+        self._tail = None
+        self._length = 0
 
 def oneway_linked_list():
     return OneWayLinkedList()
+        return
