@@ -181,25 +181,3 @@ class TwoWayLinkedList:
             current_node = next_node
 
         self._head, self._tail, self._length = None, None, 0
-
-
-if __name__ == '__main__':
-    linked_list = TwoWayLinkedList()
-    for i in range(10):
-        linked_list.add_tail_node(i)
-
-    print(f"linked_list length: {len(linked_list)}")
-    for node in linked_list:
-        print(node)
-
-    # linked_list.clear()
-    linked_list.remove_node(0)
-    linked_list.remove_node(9)
-    linked_list.remove_node(5)
-
-    linked_list.insert_node(4, 5)
-    linked_list.insert_node(8, 9)
-    linked_list.insert_node(9, [10, 11])
-    print(f"linked_list length: {len(linked_list)}")
-    for node in linked_list:
-        print(node)
