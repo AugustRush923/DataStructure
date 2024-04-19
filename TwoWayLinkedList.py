@@ -213,5 +213,4 @@ class TwoWayLinkedList:
             current_node.prev_node, current_node.next_node = None, None
             current_node = next_node
 
-        self._head, self._tail, self._length = None, None, 0
         self.head, self.tail, self._length = None, None, 0
