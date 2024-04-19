@@ -66,7 +66,7 @@ class TwoWayLinkedList:
                 head.prev_node, self._head, self._head.next_node = new_node, new_node, head
         self._length += 1
 
-    def add_head_node(self, value: Any) -> None:
+    def appendleft(self, value: Any) -> None:
         """
         在链表头部添加数据
         :param value:
@@ -76,7 +76,7 @@ class TwoWayLinkedList:
 
         self._append_node(new_node, 'head')
 
-    def add_tail_node(self, value: Any) -> None:
+    def append(self, value: Any) -> None:
         """
         在链表尾部添加数据
         :param value:
@@ -86,19 +86,28 @@ class TwoWayLinkedList:
 
         self._append_node(new_node, 'tail')
 
-    def insert_node(self, before: Any, after: Any) -> None:
+    def insert(self, before: Any, after: Any) -> None:
+        """
+        在位置before插入after。
+        :param before:
+        :param after:
+        :return:
+        """
         current_node = self._head
         while current_node:
             if self._tail.value == before:
-                self.add_tail_node(after)
+                self.append(after)
                 return
             if current_node.value == before:
                 new_node = TwoWayLinkedListNode(after)
+                # 新node的下一个node -> 当前node的下一个node | 新node的上一个node -> 当前node
                 new_node.next_node, new_node.prev_node = current_node.next_node, current_node
+                # 当前node的下一个node的上一个node -> 新node | 当前node的下一个node -> 新node
                 current_node.next_node.prev_node, current_node.next_node = new_node, new_node
                 self._length += 1
                 return
             current_node = current_node.next_node
+        raise IndexError(f"{before} not in linked list")
 
     def _remove_node(self, position: str, current: TwoWayLinkedListNode | None = None) -> None:
         """
