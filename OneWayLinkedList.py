@@ -43,7 +43,9 @@ class OneWayLinkedList:
         return self._length
 
     def __str__(self) -> str:
-        return f"{self._head.value}->{self._tail.value}"
+        head_value = self._head.value if self._head else None
+        tail_value = self._tail.value if self._tail else None
+        return f"{head_value}->{tail_value}"
 
     def __iter__(self) -> 'OneWayLinkedList':
         self._current = self._head
