@@ -100,49 +100,52 @@ class TwoWayLinkedList:
                 return
             current_node = current_node.next_node
 
-    def _remove_node(self, position: str = 'tail') -> None:
+    def _remove_node(self, position: str, current: TwoWayLinkedListNode | None = None) -> None:
         """
         从链表内移除数据
         :param position:
-                    head: 从头部移除;
-                    tail: 从尾部移除;
+                    left: 从头部移除;
+                    right: 从尾部移除;
+                    position: 指定位置移除;
+        :param current: 指定位置节点
         :return:
         """
         if self._length == 0:
-            raise IndexError("out of range")
+            raise IndexError("pop from an empty linked list")
 
         if self._length == 1:
             self._head, self._tail, self._length = None, None, 0
             return
 
-        if position == 'tail':
+        if position == 'right':
             tail_prev, tail_prev.next_node = self._tail.prev_node, None
             self._tail = tail_prev
-        else:
+        elif position == 'left':
             head_next, head_next.prev_node = self._head.next_node, None
             self._head = head_next
-
+        else:
+            current.prev_node.next_node, current.next_node.prev_node = current.next_node, current.prev_node
         self._length -= 1
 
-    def remove_tail_node(self) -> None:
+    def pop(self) -> None:
         """
         从链表尾部移除数据
         :param :
         :return:
         """
-        self._remove_node('tail')
+        self._remove_node('right')
 
-    def remove_head_node(self) -> None:
+    def popleft(self) -> None:
         """
         从链表头部移除数据
         :param :
         :return:
         """
-        self._remove_node('head')
+        self._remove_node('left')
 
-    def remove_node(self, value: Any):
+    def remove(self, value: Any) -> None:
         """
-        删除指定节点数据
+        移除找到的第一个 value。
         :param value:
         :return:
         """
@@ -153,21 +156,17 @@ class TwoWayLinkedList:
             if current.value == value:
                 # 如果要删除的节点是头节点，需要更新链表的头指针。
                 if current.prev_node is None:
-                    current.next_node.prev_node = None
-                    self._head = current.next_node
-
+                    self._remove_node('left')
                 # 如果要删除的节点是尾节点，需要更新链表的尾指针。
                 elif current.next_node is None:
-                    current.prev_node.next_node = None
-                    self._tail = current.prev_node
-
+                    self._remove_node('right')
                 else:
-                    current.prev_node.next_node, current.next_node.prev_node = current.next_node, current.prev_node
-                self._length -= 1
+                    self._remove_node('position', current)
+
                 return
             current = current.next_node
 
-        raise ValueError("value is not exist")
+        raise ValueError(f"{value} is not in linked list")
 
     def clear(self) -> None:
         """
