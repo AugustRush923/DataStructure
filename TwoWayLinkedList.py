@@ -167,7 +167,9 @@ class TwoWayLinkedList:
         :param :
         :return:
         """
+        pop_node = self.tail
         self._remove_node('right')
+        return pop_node
 
     def popleft(self) -> None:
         """
@@ -175,7 +177,9 @@ class TwoWayLinkedList:
         :param :
         :return:
         """
+        pop_node = self.head
         self._remove_node('left')
+        return pop_node
 
     def remove(self, value: Any) -> None:
         """
