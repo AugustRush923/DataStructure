@@ -45,25 +45,25 @@ class TwoWayLinkedList:
             yield current.value
             current = current.prev_node
 
-    def _append_node(self, node: TwoWayLinkedListNode, position: str = 'tail') -> None:
+    def _append_node(self, new_node: TwoWayLinkedListNode, position: str = 'tail') -> None:
         """
         往链表内添加数据
-        :param node: 链表节点
+        :param new_node: 链表节点
         :param position:
                     head: 往链表头部添加数据
                     tail: 往链表尾部添加数据
         :return:
         """
         if self._length == 0:
-            self._head = node
-            self._tail = node
+            self._head = new_node
+            self._tail = new_node
         else:
             if position == 'tail':
                 tail = self._tail
-                tail.next_node, self._tail, self._tail.prev_node = node, node, tail
+                tail.next_node, self._tail, self._tail.prev_node = new_node, new_node, tail
             else:
                 head = self._head
-                head.prev_node, self._head, self._head.next_node = node, node, head
+                head.prev_node, self._head, self._head.next_node = new_node, new_node, head
         self._length += 1
 
     def add_head_node(self, value: Any) -> None:
@@ -72,9 +72,9 @@ class TwoWayLinkedList:
         :param value:
         :return:
         """
-        node = TwoWayLinkedListNode(value)
+        new_node = TwoWayLinkedListNode(value)
 
-        self._append_node(node, 'head')
+        self._append_node(new_node, 'head')
 
     def add_tail_node(self, value: Any) -> None:
         """
@@ -82,9 +82,23 @@ class TwoWayLinkedList:
         :param value:
         :return:
         """
-        node = TwoWayLinkedListNode(value)
+        new_node = TwoWayLinkedListNode(value)
 
-        self._append_node(node, 'tail')
+        self._append_node(new_node, 'tail')
+
+    def insert_node(self, before: Any, after: Any) -> None:
+        current_node = self._head
+        while current_node:
+            if self._tail.value == before:
+                self.add_tail_node(after)
+                return
+            if current_node.value == before:
+                new_node = TwoWayLinkedListNode(after)
+                new_node.next_node, new_node.prev_node = current_node.next_node, current_node
+                current_node.next_node.prev_node, current_node.next_node = new_node, new_node
+                self._length += 1
+                return
+            current_node = current_node.next_node
 
     def _remove_node(self, position: str = 'tail') -> None:
         """
@@ -141,20 +155,51 @@ class TwoWayLinkedList:
                 if current.prev_node is None:
                     current.next_node.prev_node = None
                     self._head = current.next_node
-                    return
 
                 # 如果要删除的节点是尾节点，需要更新链表的尾指针。
-                if current.next_node is None:
+                elif current.next_node is None:
                     current.prev_node.next_node = None
                     self._tail = current.prev_node
-                    return
 
-                current.prev_node.next_node, current.next_node.prev_node = current.next_node, current.prev_node
+                else:
+                    current.prev_node.next_node, current.next_node.prev_node = current.next_node, current.prev_node
+                self._length -= 1
                 return
             current = current.next_node
 
         raise ValueError("value is not exist")
 
+    def clear(self) -> None:
+        """
+        清空双向链表内的元素
+        :return:
+        """
+        current_node = self._head
+        while current_node:
+            next_node = current_node.next_node
+            current_node.prev_node, current_node.next_node = None, None
+            current_node = next_node
 
-def twoway_linked_list():
-    return TwoWayLinkedList()
+        self._head, self._tail, self._length = None, None, 0
+
+
+if __name__ == '__main__':
+    linked_list = TwoWayLinkedList()
+    for i in range(10):
+        linked_list.add_tail_node(i)
+
+    print(f"linked_list length: {len(linked_list)}")
+    for node in linked_list:
+        print(node)
+
+    # linked_list.clear()
+    linked_list.remove_node(0)
+    linked_list.remove_node(9)
+    linked_list.remove_node(5)
+
+    linked_list.insert_node(4, 5)
+    linked_list.insert_node(8, 9)
+    linked_list.insert_node(9, [10, 11])
+    print(f"linked_list length: {len(linked_list)}")
+    for node in linked_list:
+        print(node)
