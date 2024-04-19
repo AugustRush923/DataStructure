@@ -1,3 +1,4 @@
+import copy
 from typing import Any
 
 
@@ -20,8 +21,8 @@ class TwoWayLinkedList:
             head: TwoWayLinkedListNode | None = None,
             tail: TwoWayLinkedListNode | None = None,
     ):
-        self._head = head
-        self._tail = tail
+        self.head = head
+        self.tail = tail
         self._length = 0
         self._current: TwoWayLinkedListNode | None = None
 
@@ -29,7 +30,7 @@ class TwoWayLinkedList:
         return self._length
 
     def __iter__(self):
-        self._current = self._head
+        self._current = self.head
         return self
 
     def __next__(self):
@@ -40,7 +41,7 @@ class TwoWayLinkedList:
         return value
 
     def __reversed__(self):
-        current = self._tail
+        current = self.tail
         while current:
             yield current.value
             current = current.prev_node
@@ -55,15 +56,15 @@ class TwoWayLinkedList:
         :return:
         """
         if self._length == 0:
-            self._head = new_node
-            self._tail = new_node
+            self.head = new_node
+            self.tail = new_node
         else:
             if position == 'tail':
-                tail = self._tail
-                tail.next_node, self._tail, self._tail.prev_node = new_node, new_node, tail
+                tail = self.tail
+                tail.next_node, self.tail, self.tail.prev_node = new_node, new_node, tail
             else:
-                head = self._head
-                head.prev_node, self._head, self._head.next_node = new_node, new_node, head
+                head = self.head
+                head.prev_node, self.head, self.head.next_node = new_node, new_node, head
         self._length += 1
 
     def appendleft(self, value: Any) -> None:
@@ -86,6 +87,30 @@ class TwoWayLinkedList:
 
         self._append_node(new_node, 'tail')
 
+    def extend(self, linkedlist: 'TwoWayLinkedList') -> None:
+        """
+        扩展linked list的右侧，通过添加linkedlist参数中的元素。
+        :param linkedlist: linked list
+        :return:
+        """
+        linkedList = copy.deepcopy(linkedlist)
+        self.tail.next_node = linkedList.head
+        linkedList.head.prev_node = self.tail
+        self.tail = linkedList.tail
+        self._length += len(linkedList)
+
+    def extendleft(self, linkedlist: 'TwoWayLinkedList') -> None:
+        """
+        扩展linked list的左侧，通过添加linkedlist参数中的元素。
+        :param linkedlist: linked list
+        :return:
+        """
+        linkedList = copy.deepcopy(linkedlist)
+        self.head.prev_node = linkedList.tail
+        linkedList.tail.next_node = self.head
+        self.head = linkedList.head
+        self._length += len(linkedList)
+
     def insert(self, before: Any, after: Any) -> None:
         """
         在位置before插入after。
@@ -93,9 +118,9 @@ class TwoWayLinkedList:
         :param after:
         :return:
         """
-        current_node = self._head
+        current_node = self.head
         while current_node:
-            if self._tail.value == before:
+            if self.tail.value == before:
                 self.append(after)
                 return
             if current_node.value == before:
@@ -123,15 +148,15 @@ class TwoWayLinkedList:
             raise IndexError("pop from an empty linked list")
 
         if self._length == 1:
-            self._head, self._tail, self._length = None, None, 0
+            self.head, self.tail, self._length = None, None, 0
             return
 
         if position == 'right':
-            tail_prev, tail_prev.next_node = self._tail.prev_node, None
-            self._tail = tail_prev
+            tail_prev, tail_prev.next_node = self.tail.prev_node, None
+            self.tail = tail_prev
         elif position == 'left':
-            head_next, head_next.prev_node = self._head.next_node, None
-            self._head = head_next
+            head_next, head_next.prev_node = self.head.next_node, None
+            self.head = head_next
         else:
             current.prev_node.next_node, current.next_node.prev_node = current.next_node, current.prev_node
         self._length -= 1
@@ -158,7 +183,7 @@ class TwoWayLinkedList:
         :param value:
         :return:
         """
-        current = self._head
+        current = self.head
         # 从链表的头节点开始，沿着链表的 next 指针依次遍历每个节点，直到找到要删除的节点。
         while current:
             # 找到要删除的节点后，更新前一个节点和后一个节点的指针，将它们连接起来。
@@ -182,10 +207,11 @@ class TwoWayLinkedList:
         清空双向链表内的元素
         :return:
         """
-        current_node = self._head
+        current_node = self.head
         while current_node:
             next_node = current_node.next_node
             current_node.prev_node, current_node.next_node = None, None
             current_node = next_node
 
         self._head, self._tail, self._length = None, None, 0
+        self.head, self.tail, self._length = None, None, 0
