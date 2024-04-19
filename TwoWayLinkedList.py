@@ -161,7 +161,7 @@ class TwoWayLinkedList:
             current.prev_node.next_node, current.next_node.prev_node = current.next_node, current.prev_node
         self._length -= 1
 
-    def pop(self) -> None:
+    def pop(self) -> TwoWayLinkedListNode:
         """
         从链表尾部移除数据
         :param :
@@ -171,7 +171,7 @@ class TwoWayLinkedList:
         self._remove_node('right')
         return pop_node
 
-    def popleft(self) -> None:
+    def popleft(self) -> TwoWayLinkedListNode:
         """
         从链表头部移除数据
         :param :
