@@ -26,7 +26,7 @@ class OneWayLinkedListNode:
         self._next_node = next_node
 
     def __str__(self):
-        return f"{self.value}->{self.next_node}"
+        return f"{self.value}"
 
 
 class OneWayLinkedList:
@@ -58,7 +58,7 @@ class OneWayLinkedList:
         self._current = self._current.next_node
         return value
 
-    def insert_node(self, before: Any, after: Any) -> None:
+    def insert(self, before: Any, after: Any) -> None:
         """
         将新元素插入到指定节点之后
         :param before: 指定节点
@@ -74,7 +74,7 @@ class OneWayLinkedList:
                 current_node.next_node = new_node
                 return
             current_node = current_node.next_node
-        return
+        raise IndexError(f"{before} not in linked list")
 
     def _append_node(self, new_node: OneWayLinkedListNode, direction: str = 'tail') -> None:
         """
@@ -98,7 +98,7 @@ class OneWayLinkedList:
 
         self._length += 1
 
-    def tail_append_node(self, value: Any) -> None:
+    def append(self, value: Any) -> None:
         """
         将新元素插入到链表的末尾，成为新的最后一个元素。
         :param value: 新元素
@@ -107,7 +107,7 @@ class OneWayLinkedList:
         new_node = OneWayLinkedListNode(value)
         self._append_node(new_node, direction='tail')
 
-    def head_append_node(self, value: Any) -> None:
+    def appendleft(self, value: Any) -> None:
         """
         将新元素插入到链表的头部，使其成为新的第一个元素。
         :param value: 新元素
@@ -116,7 +116,7 @@ class OneWayLinkedList:
         new_node = OneWayLinkedListNode(value)
         self._append_node(new_node, direction='head')
 
-    def find_node(self, value: Any) -> OneWayLinkedListNode | None:
+    def find(self, value: Any) -> OneWayLinkedListNode | None:
         """
         根据给定的数值查找链表中的特定元素。
         :param value: 指定元素
@@ -129,11 +129,11 @@ class OneWayLinkedList:
             current_node = current_node.next_node
         return None
 
-    def remove_node(self, value: Any) -> OneWayLinkedListNode | None:
+    def _remove(self, value: Any) -> OneWayLinkedListNode:
         """
         根据给定的元素值删除节点。
         :param value: 指定元素
-        :return: OneWayLinkedListNode | None
+        :return: OneWayLinkedListNode
         """
         current_node, previous_node = self._head, None
 
@@ -147,21 +147,30 @@ class OneWayLinkedList:
                 return current_node
             previous_node, current_node = current_node, current_node.next_node
 
-        return None
+        raise IndexError(f"{value} not in linked list")
 
-    def head_remove(self) -> OneWayLinkedListNode | None:
+    def remove(self, value: Any) -> None:
+        self._remove(value)
+
+    def popleft(self) -> OneWayLinkedListNode:
         """
         删除链表的第一个元素。
         :return:
         """
-        return self.remove_node(self._head.value)
+        head = self._head
+        if head is None:
+            raise IndexError("pop from an empty linked list")
+        self._head, head.next_node = head.next_node, None
+        return head
 
-    def tail_remove(self) -> OneWayLinkedListNode | None:
+    def pop(self) -> OneWayLinkedListNode:
         """
         删除链表的最后一个元素。
         :return:
         """
-        return self.remove_node(self._tail.value)
+        if self._tail is None:
+            raise IndexError("pop from an empty linked list")
+        return self._remove(self._tail.value)
 
     def clear(self) -> None:
         """
