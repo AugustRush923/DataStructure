@@ -33,10 +33,8 @@ class OneWayLinkedList:
     def __init__(
             self,
             head: OneWayLinkedListNode | None = None,
-            tail: OneWayLinkedListNode | None = None,
     ) -> None:
         self._head = head
-        self._tail = tail
         self._length = 0
 
     def __len__(self) -> int:
@@ -44,8 +42,7 @@ class OneWayLinkedList:
 
     def __str__(self) -> str:
         head_value = self._head.value if self._head else None
-        tail_value = self._tail.value if self._tail else None
-        return f"{head_value}->{tail_value}"
+        return f"{head_value}"
 
     def __iter__(self) -> 'OneWayLinkedList':
         self._current = self._head
@@ -53,10 +50,37 @@ class OneWayLinkedList:
 
     def __next__(self) -> Any:
         if not self._current:
+            del self._current
             raise StopIteration
         value = self._current.value
         self._current = self._current.next_node
         return value
+
+    def _append(self, new_node: OneWayLinkedListNode, direction: str) -> None:
+        """
+        插入新节点至链表内
+        :param new_node: 新节点
+        :param direction:
+        head: 插入至链表头部 tail: 插入至链表尾部
+        :return:
+        """
+        if direction not in ['tail', 'head']:
+            raise ValueError(f'not support {direction}')
+
+        if self._head is None:
+            self._head = new_node
+        else:
+            current_node = self._head
+            if direction == 'tail':
+                while current_node is not None:
+                    if current_node.next_node is None:
+                        current_node.next_node = new_node
+                        break
+                    current_node = current_node.next_node
+            else:
+                self._head, self._head.next_node = new_node, current_node
+
+        self._length += 1
 
     def insert(self, before: Any, after: Any) -> None:
         """
@@ -70,33 +94,11 @@ class OneWayLinkedList:
 
         while current_node:
             if current_node.value == before:
-                new_node.next_node = current_node.next_node
-                current_node.next_node = new_node
+                new_node.next_node, current_node.next_node = current_node.next_node, new_node
+                self._length += 1
                 return
             current_node = current_node.next_node
         raise IndexError(f"{before} not in linked list")
-
-    def _append_node(self, new_node: OneWayLinkedListNode, direction: str = 'tail') -> None:
-        """
-        插入新节点至链表内
-        :param new_node: 新节点
-        :param direction:
-                    'head': 插入至链表头部
-                    'tail': 插入至链表末尾
-        :return:
-        """
-        if self._length == 0:
-            self._head = new_node
-            self._tail = new_node
-        else:
-            if direction == 'tail':
-                tail = self._tail
-                tail.next_node, self._tail = new_node, new_node
-            else:
-                head = self._head
-                new_node.next_node, self._head = head, new_node
-
-        self._length += 1
 
     def append(self, value: Any) -> None:
         """
@@ -105,7 +107,7 @@ class OneWayLinkedList:
         :return:
         """
         new_node = OneWayLinkedListNode(value)
-        self._append_node(new_node, direction='tail')
+        self._append(new_node, direction='tail')
 
     def appendleft(self, value: Any) -> None:
         """
@@ -114,7 +116,7 @@ class OneWayLinkedList:
         :return:
         """
         new_node = OneWayLinkedListNode(value)
-        self._append_node(new_node, direction='head')
+        self._append(new_node, direction='head')
 
     def find(self, value: Any) -> OneWayLinkedListNode | None:
         """
@@ -152,25 +154,46 @@ class OneWayLinkedList:
     def remove(self, value: Any) -> None:
         self._remove(value)
 
+    def _pop(self, direction: str) -> OneWayLinkedListNode:
+        """
+        弹出元素
+        :param direction: head: 弹出头部元素 tail: 弹出尾部元素
+        :return: OneWayLinkedListNode
+        """
+        if direction not in ["head", "tail"]:
+            raise ValueError(f'not support {direction}')
+
+        if self._head is None:
+            raise IndexError(f"pop from an empty linked list")
+
+        current_node = self._head
+        if direction == "head":
+            self._head, current_node.next_node = self._head.next_node, None
+        else:
+            previous_node = None
+            while current_node:
+                if current_node.next_node is None:
+                    previous_node.next_node = None
+                    break
+                previous_node = current_node
+                current_node = current_node.next_node
+
+        self._length -= 1
+        return current_node
+
     def popleft(self) -> OneWayLinkedListNode:
         """
         删除链表的第一个元素。
-        :return:
+        :return: OneWayLinkedListNode
         """
-        head = self._head
-        if head is None:
-            raise IndexError("pop from an empty linked list")
-        self._head, head.next_node = head.next_node, None
-        return head
+        return self._pop("head")
 
     def pop(self) -> OneWayLinkedListNode:
         """
         删除链表的最后一个元素。
-        :return:
+        :return: OneWayLinkedListNode
         """
-        if self._tail is None:
-            raise IndexError("pop from an empty linked list")
-        return self._remove(self._tail.value)
+        return self._pop("tail")
 
     def clear(self) -> None:
         """
@@ -183,7 +206,6 @@ class OneWayLinkedList:
             current.next_node, current = None, next_node
 
         self._head = None
-        self._tail = None
         self._length = 0
 
         return

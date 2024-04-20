@@ -24,7 +24,6 @@ class TwoWayLinkedList:
         self.head = head
         self.tail = tail
         self._length = 0
-        self._current: TwoWayLinkedListNode | None = None
 
     def __str__(self):
         head_value = self.head.value if self.head else None
