@@ -28,7 +28,7 @@ class OneWayLinkedListNode:
         self._next_node = next_node
 
     def __str__(self):
-        return f"{self.value}->{self.next_node}"
+        return f"SinglyLinkedList: <{self.value} -> {hex(id(self.next_node))}>"
 
 
 class OneWayLinkedList:
@@ -36,11 +36,11 @@ class OneWayLinkedList:
             self,
             iterable: Iterable[Any] = ()
     ) -> None:
-        self._head = None
-        self._length = 0
+        self._head: OneWayLinkedListNode | None = None
+        self._length: int = 0
         self._makeup_linkedlist(iterable)
 
-    def _makeup_linkedlist(self, iterable: Iterable[Any]):
+    def _makeup_linkedlist(self, iterable: Iterable[Any]) -> None:
         for value in iterable:
             new_node = OneWayLinkedListNode(value)
             self._append(new_node, 'tail')
@@ -49,7 +49,10 @@ class OneWayLinkedList:
         return self._length
 
     def __str__(self) -> str:
-        return f"{self._head}"
+        if self._head is None:
+            return f"SinglyLinkedList: <({None} -> {None})>"
+
+        return f"SinglyLinkedList: <({self._head.value} -> {self._get_tail_node().value})>"
 
     def __iter__(self) -> 'OneWayLinkedList':
         self._current = self._head

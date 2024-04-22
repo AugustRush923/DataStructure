@@ -1,34 +1,40 @@
 import copy
-from typing import Any
+from typing import Any, Iterable
 
 
 class TwoWayLinkedListNode:
     def __init__(
             self, value: Any,
             prev_node: 'TwoWayLinkedListNode' = None,
-            next_node: 'TwoWayLinkedListNode' = None):
+            next_node: 'TwoWayLinkedListNode' = None,
+    ):
         self.value = value
         self.prev_node = prev_node
         self.next_node = next_node
 
     def __str__(self):
-        return f"node: {self.value}"
+        return f"DoublyLinkedListNode: <({hex(id(self.prev_node))} -> {self.value} -> {hex(id(self.next_node))})>"
 
 
 class TwoWayLinkedList:
     def __init__(
             self,
-            head: TwoWayLinkedListNode | None = None,
-            tail: TwoWayLinkedListNode | None = None,
+            iterable: Iterable[Any] = (),
     ):
-        self.head = head
-        self.tail = tail
-        self._length = 0
+        self.head: TwoWayLinkedListNode | None = None
+        self.tail: TwoWayLinkedListNode | None = None
+        self._length: int = 0
+        self._makeup_linkedlist(iterable)
+
+    def _makeup_linkedlist(self, iterable: Iterable[Any]) -> None:
+        for item in iterable:
+            new_node = TwoWayLinkedListNode(item)
+            self._append_node(new_node, 'tail')
 
     def __str__(self):
         head_value = self.head.value if self.head else None
         tail_value = self.tail.value if self.tail else None
-        return f"{head_value} -> {tail_value}"
+        return f"DoublyLinkedList: <({head_value} -> {tail_value})>"
 
     def __len__(self):
         return self._length
@@ -222,3 +228,16 @@ class TwoWayLinkedList:
             current_node = next_node
 
         self.head, self.tail, self._length = None, None, 0
+
+    def find(self, value: Any) -> TwoWayLinkedListNode | None:
+        """
+        根据给定的数值查找链表中的特定元素。
+        :param value: 指定元素
+        :return: TwoWayLinkedListNode | None
+        """
+        current_node = self.head
+        while current_node:
+            if current_node.value == value:
+                return current_node
+            current_node = current_node.next_node
+        return
