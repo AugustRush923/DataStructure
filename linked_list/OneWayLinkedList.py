@@ -1,9 +1,11 @@
-from typing import Any
+from copy import deepcopy
+from typing import Any, Iterable
 
 
 class OneWayLinkedListNode:
     def __init__(
-            self, value: Any,
+            self,
+            value: Any,
             next_node: 'OneWayLinkedListNode' = None,
     ):
         self._value = value
@@ -26,23 +28,28 @@ class OneWayLinkedListNode:
         self._next_node = next_node
 
     def __str__(self):
-        return f"{self.value}"
+        return f"{self.value}->{self.next_node}"
 
 
 class OneWayLinkedList:
     def __init__(
             self,
-            head: OneWayLinkedListNode | None = None,
+            iterable: Iterable[Any] = ()
     ) -> None:
-        self._head = head
+        self._head = None
         self._length = 0
+        self._makeup_linkedlist(iterable)
+
+    def _makeup_linkedlist(self, iterable: Iterable[Any]):
+        for value in iterable:
+            new_node = OneWayLinkedListNode(value)
+            self._append(new_node, 'tail')
 
     def __len__(self) -> int:
         return self._length
 
     def __str__(self) -> str:
-        head_value = self._head.value if self._head else None
-        return f"{head_value}"
+        return f"{self._head}"
 
     def __iter__(self) -> 'OneWayLinkedList':
         self._current = self._head
@@ -55,6 +62,19 @@ class OneWayLinkedList:
         value = self._current.value
         self._current = self._current.next_node
         return value
+
+    def _get_tail_node(self) -> OneWayLinkedListNode:
+        """
+        获取链表尾部
+        :return:
+        """
+        current_node = self._head
+        tail_node = None
+        while current_node:
+            if current_node.next_node is None:
+                tail_node = current_node
+            current_node = current_node.next_node
+        return tail_node
 
     def _append(self, new_node: OneWayLinkedListNode, direction: str) -> None:
         """
@@ -70,15 +90,12 @@ class OneWayLinkedList:
         if self._head is None:
             self._head = new_node
         else:
-            current_node = self._head
             if direction == 'tail':
-                while current_node is not None:
-                    if current_node.next_node is None:
-                        current_node.next_node = new_node
-                        break
-                    current_node = current_node.next_node
+                tail_node = self._get_tail_node()
+                tail_node.next_node = new_node
             else:
-                self._head, self._head.next_node = new_node, current_node
+                old_head_node = self._head
+                self._head, self._head.next_node = new_node, old_head_node
 
         self._length += 1
 
@@ -209,3 +226,39 @@ class OneWayLinkedList:
         self._length = 0
 
         return
+
+    def extend(self, linked_list: 'OneWayLinkedList') -> None:
+        """
+        在尾部扩展链表
+        :param linked_list: 新链表
+        :return:
+        """
+        if linked_list is None or linked_list._head is None:
+            raise TypeError("'NoneType' object is not iterable")
+
+        linkedlist_copy = deepcopy(linked_list)
+        if self._head is None:
+            self._head = linkedlist_copy._head
+            return
+
+        tail_node = self._get_tail_node()
+        tail_node.next_node = linkedlist_copy._head
+        self._length = self._length + linkedlist_copy._length
+
+    def extendleft(self, linked_list: 'OneWayLinkedList') -> None:
+        """
+        在头部扩展链表
+        :param linked_list: 新链表
+        :return:
+        """
+        if linked_list is None or linked_list._head is None:
+            raise TypeError("'NoneType' object is not iterable")
+
+        linkedlist_copy = deepcopy(linked_list)
+        if self._head is None:
+            self._head = linkedlist_copy._head
+            return
+
+        tail_node = linkedlist_copy._get_tail_node()
+        tail_node.next_node, self._head = self._head, linkedlist_copy._head
+        self._length = self._length + linkedlist_copy._length
